@@ -13,13 +13,9 @@
     />
   </head>
   <body>
-      <a href="https://github.com/xtermjs/xterm.js/" target="_blank" style="font-size: 1.4em; text-decoration: none; color:black">xterm.js</a
-      >&nbsp;&nbsp;&nbsp;
-    </a>
-    <span style="font-size: small"
-      >status:
-      <span style="font-size: small" id="status">connecting...</span></span
-    >
+      <a href="https://github.com/xtermjs/xterm.js" target="_blank" style="font-size: 1.4em; text-decoration: none; color:black">xterm.js</a>&nbsp;&nbsp;&nbsp;
+    <span style="font-size: small">status:
+      <span style="font-size: small" id="status">connecting...</span></span>
 
     <div style="width: 100%; height: calc(100% - 50px)" id="terminal"></div>
 
@@ -54,7 +50,7 @@ ch.js"></script>
       console.log(`size: ${term.cols} columns, ${term.rows} rows`);
       fit.fit();
       term.writeln("Welcome to xterm.js!");
-      term.writeln("https://github.com/xtermjs/xterm.js/");
+      term.writeln("https://github.com/xtermjs/xterm.js");
       term.writeln('')
       term.writeln("You can copy with ctrl+shift+x");
       term.writeln("You can paste with ctrl+shift+v");
