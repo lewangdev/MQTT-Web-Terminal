@@ -12,36 +12,40 @@ import paho.mqtt.client as mqtt
 import threading
 
 
+FORMAT = '%(asctime)s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.DEBUG)
+
+
 class AttrDict(dict):
     def __init__(self, *args, **kwargs):
         super(AttrDict, self).__init__(*args, **kwargs)
         self.__dict__ = self
 
 
-app = AttrDict(config=AttrDict(fd=None, cmd="sh"))
+app = AttrDict(config=AttrDict(fd=None, cmd="sh", child_pid=None))
 
 
 def set_winsize(fd, row, col, xpix=0, ypix=0):
-    logging.debug("setting window size with termios")
+    logging.debug("Setting window size with termios")
     winsize = struct.pack("HHHH", row, col, xpix, ypix)
     fcntl.ioctl(fd, termios.TIOCSWINSZ, winsize)
 
 
 def resize(data):
-    if app.config["fd"]:
+    if app.config.fd:
         logging.debug(f"Resizing window to {data['rows']}x{data['cols']}")
-        set_winsize(app.config["fd"], data["rows"], data["cols"])
+        set_winsize(app.config.fd, data["rows"], data["cols"])
 
 
 def read_and_forward_pty_output(mqttc):
     max_read_bytes = 1024 * 20
     while True:
-        if app.config["fd"]:
-            timeout_sec = 30
-            (data_ready, _, _) = select.select([app.config["fd"]], [], [], timeout_sec)
-            print(data_ready)
+        if app.config.fd:
+            timeout_sec = None
+            (data_ready, _, _) = select.select([app.config.fd], [], [], timeout_sec)
+            logging.debug("Data ready: " + ",".join(map(lambda x: str(x), data_ready)))
             if data_ready:
-                output = os.read(app.config["fd"], max_read_bytes).decode(
+                output = os.read(app.config.fd, max_read_bytes).decode(
                     errors="ignore"
                 )
                 mqttc.publish("/pty-output", json.dumps({"output": output}))
@@ -51,19 +55,19 @@ def pty_input(data):
     """write to the child pty. The pty sees this as if you are typing in a real
     terminal.
     """
-    if app.config["fd"]:
-        logging.debug("received input from browser: %s" % data["input"])
-        os.write(app.config["fd"], data["input"].encode())
+    if app.config.fd:
+        logging.debug("Received input from browser: %s" % data["input"])
+        os.write(app.config.fd, data["input"].encode())
 
 
 def mqtt_on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+    logging.debug(f"Connected with result code {rc}")
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("/pty-input")
     client.subscribe("/resize")
-    t1 = threading.Thread(target=read_and_forward_pty_output, args=(client,))
+    t1 = threading.Thread(target=read_and_forward_pty_output, args=(client,), daemon=True)
     t1.start()
 
 
@@ -72,7 +76,7 @@ def mqtt_on_message(client, userdata, msg):
     topic = msg.topic
     payload = msg.payload.decode('utf8')
     data = json.loads(payload)
-    print(msg.topic+" "+payload)
+    logging.debug(f"Topic: {msg.topic}, pyload: {msg.topic}")
     if topic == '/pty-input':
         pty_input(data)
     elif topic == '/resize':
@@ -86,14 +90,14 @@ if __name__ == "__main__":
         # this is the child process fork.
         # anything printed here will show up in the pty, including the output
         # of this subprocess
-        subprocess.run(app.config["cmd"])
+        subprocess.run(app.config.cmd)
     else:
         # this is the parent process fork.
         # store child fd and pid
-        app.config["fd"] = fd
-        app.config["child_pid"] = child_pid
+        app.config.fd = fd
+        app.config.child_pid = child_pid
         set_winsize(fd, 50, 50)
-        cmd = " ".join(shlex.quote(c) for c in app.config["cmd"])
+        cmd = " ".join(shlex.quote(c) for c in app.config.cmd)
 
     client = mqtt.Client()
     client.on_connect = mqtt_on_connect
