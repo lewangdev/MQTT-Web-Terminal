@@ -32,6 +32,8 @@ ch.js"></script>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
     <script>
+      const pk = "1";
+      const dk = "11";
       const term = new Terminal({
         cursorBlink: true,
         macOptionIsMeta: true,
@@ -57,16 +59,17 @@ ch.js"></script>
       term.writeln('')
       term.onData((data) => {
         console.log("browser terminal received new data:", data);
-        mqttc.publish("/pty-input", JSON.stringify({ input: data }));
+        var topic
+        mqttc.publish("/user/" + pk + "/" + dk + "/terminal/input", JSON.stringify({ input: data }));
       });
 
       const mqttc = mqtt.connect("ws://192.168.52.164:9083/mqtt");
-      mqttc.subscribe("/pty-output")
+      mqttc.subscribe("/user/" + pk + "/" + dk + "/terminal/output")
       const status = document.getElementById("status");
 
       mqttc.on("message", function (topic, payload) {
         console.log(topic)
-        if (topic == '/pty-output') {
+        if (topic == "/user/" + pk + "/" + dk + "/terminal/output") {
           data = JSON.parse(payload);
           console.log("new output received from server:", data.output);
           term.write(data.output);
@@ -88,7 +91,7 @@ ch.js"></script>
         fit.fit();
         const dims = { cols: term.cols, rows: term.rows };
         console.log("sending new dimensions to server's pty", dims);
-        mqttc.publish("/resize", JSON.stringify(dims));
+        mqttc.publish("/user/" + pk + "/" + dk + "/terminal/resize", JSON.stringify(dims));
       }
 
       function debounce(func, wait_ms) {

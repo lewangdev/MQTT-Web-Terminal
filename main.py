@@ -14,6 +14,8 @@ import threading
 
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
+pk = "1"
+dk = "11"
 
 
 class AttrDict(dict):
@@ -48,7 +50,7 @@ def read_and_forward_pty_output(mqttc):
                 output = os.read(app.config.fd, max_read_bytes).decode(
                     errors="ignore"
                 )
-                mqttc.publish("/pty-output", json.dumps({"output": output}))
+                mqttc.publish(f"/user/{pk}/{dk}/terminal/output", json.dumps({"output": output}))
 
 
 def pty_input(data):
@@ -65,8 +67,10 @@ def mqtt_on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe("/pty-input")
-    client.subscribe("/resize")
+    pk = "1"
+    dk = "11"
+    client.subscribe(f"/user/{pk}/{dk}/terminal/input")
+    client.subscribe(f"/user/{pk}/{dk}/terminal/resize")
     t1 = threading.Thread(target=read_and_forward_pty_output, args=(client,), daemon=True)
     t1.start()
 
@@ -77,9 +81,11 @@ def mqtt_on_message(client, userdata, msg):
     payload = msg.payload.decode('utf8')
     data = json.loads(payload)
     logging.debug(f"Topic: {msg.topic}, pyload: {msg.topic}")
-    if topic == '/pty-input':
+    pk = "1"
+    dk = "11"
+    if topic == f"/user/{pk}/{dk}/terminal/input":
         pty_input(data)
-    elif topic == '/resize':
+    elif topic == f"/user/{pk}/{dk}/terminal/resize":
         resize(data)
 
 
