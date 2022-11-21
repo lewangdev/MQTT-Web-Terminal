@@ -5,7 +5,6 @@ import select
 import termios
 import struct
 import fcntl
-import shlex
 import logging
 import json
 import paho.mqtt.client as mqtt
@@ -67,8 +66,6 @@ def mqtt_on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    pk = "1"
-    dk = "11"
     client.subscribe(f"/user/{pk}/{dk}/terminal/input")
     client.subscribe(f"/user/{pk}/{dk}/terminal/resize")
     t1 = threading.Thread(target=read_and_forward_pty_output, args=(client,), daemon=True)
@@ -80,9 +77,7 @@ def mqtt_on_message(client, userdata, msg):
     topic = msg.topic
     payload = msg.payload.decode('utf8')
     data = json.loads(payload)
-    logging.debug(f"Topic: {msg.topic}, pyload: {msg.topic}")
-    pk = "1"
-    dk = "11"
+    logging.debug(f"Topic: {msg.topic}, pyload: {payload}")
     if topic == f"/user/{pk}/{dk}/terminal/input":
         pty_input(data)
     elif topic == f"/user/{pk}/{dk}/terminal/resize":
@@ -103,9 +98,9 @@ if __name__ == "__main__":
         app.config.fd = fd
         app.config.child_pid = child_pid
         set_winsize(fd, 50, 50)
-        cmd = " ".join(shlex.quote(c) for c in app.config.cmd)
 
-    client = mqtt.Client()
+    client = mqtt.Client(client_id=f"{pk}.{dk}")
+    client.username_pw_set(username=f"{pk}.{dk}", password=dk)
     client.on_connect = mqtt_on_connect
     client.on_message = mqtt_on_message
 

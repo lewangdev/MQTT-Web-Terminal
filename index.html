@@ -63,7 +63,7 @@ ch.js"></script>
         mqttc.publish("/user/" + pk + "/" + dk + "/terminal/input", JSON.stringify({ input: data }));
       });
 
-      const mqttc = mqtt.connect("ws://192.168.52.164:9083/mqtt");
+      const mqttc = mqtt.connect("ws://192.168.52.164:9083/mqtt", {"username":"token", "password":"10PEdmO5vLS55EIbBrbO5j"});
       mqttc.subscribe("/user/" + pk + "/" + dk + "/terminal/output")
       const status = document.getElementById("status");
 
