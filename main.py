@@ -101,7 +101,6 @@ if __name__ == "__main__":
         # anything printed here will show up in the pty, including the output
         # of this subprocess
         while True:
-            print(1)
             subprocess.run(config.cmd)
     else:
         # this is the parent process fork.
