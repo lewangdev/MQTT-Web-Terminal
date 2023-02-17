@@ -20,6 +20,7 @@ python3 main.py
 ## On your PC
 
 ```sh
+npm install
 python -m http.server
 ```
 
