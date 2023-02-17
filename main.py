@@ -7,7 +7,6 @@ import struct
 import fcntl
 import logging
 import json
-import time
 
 import paho.mqtt.client as mqtt
 import threading
@@ -15,8 +14,8 @@ import threading
 
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
-pk = "hWHbMmfnDa"
-dk = "CFE4C09C"
+DEVICE_ID = "hWHbMmfnDa"
+DEVICE_KEY = "CFE4C09C"
 
 
 class AttrDict(dict):
@@ -25,7 +24,7 @@ class AttrDict(dict):
         self.__dict__ = self
 
 
-config=AttrDict(fd=None, cmd="sh", child_pid=None)
+config = AttrDict(fd=None, cmd="sh", child_pid=None)
 
 
 def set_winsize(fd, row, col, xpix=0, ypix=0):
@@ -46,16 +45,19 @@ def read_and_forward_pty_output(mqttc):
         if config.fd:
             try:
                 timeout_sec = None
-                (data_ready, _, _) = select.select([config.fd], [], [], timeout_sec)
-                logging.debug("Data ready: " + ",".join(map(lambda x: str(x), data_ready)))
+                (data_ready, _, _) = select.select(
+                    [config.fd], [], [], timeout_sec)
+                logging.debug("Data ready: " +
+                              ",".join(map(lambda x: str(x), data_ready)))
             except select.error:
                 logging.info("select error")
                 pass
             if data_ready:
                 output = os.read(config.fd, max_read_bytes).decode(
                     errors="ignore"
-                    )
-                mqttc.publish(f"/user/{pk}/{dk}/terminal/output", json.dumps({"output": output}))
+                )
+                mqttc.publish(
+                    f"/devices/{DEVICE_ID}/terminal/output", json.dumps({"output": output}))
 
 
 def pty_input(data):
@@ -72,9 +74,10 @@ def mqtt_on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe(f"/user/{pk}/{dk}/terminal/input")
-    client.subscribe(f"/user/{pk}/{dk}/terminal/resize")
-    t1 = threading.Thread(target=read_and_forward_pty_output, args=(client,), daemon=True)
+    client.subscribe(f"/devices/{DEVICE_ID}/terminal/input")
+    client.subscribe(f"/devices/{DEVICE_ID}/terminal/resize")
+    t1 = threading.Thread(target=read_and_forward_pty_output,
+                          args=(client,), daemon=True)
     t1.start()
 
 
@@ -84,9 +87,9 @@ def mqtt_on_message(client, userdata, msg):
     payload = msg.payload.decode('utf8')
     data = json.loads(payload)
     logging.debug(f"Topic: {msg.topic}, pyload: {payload}")
-    if topic == f"/user/{pk}/{dk}/terminal/input":
+    if topic == f"/devices/{DEVICE_ID}/terminal/input":
         pty_input(data)
-    elif topic == f"/user/{pk}/{dk}/terminal/resize":
+    elif topic == f"/devices/{DEVICE_ID}/terminal/resize":
         resize(data)
 
 
@@ -106,8 +109,8 @@ if __name__ == "__main__":
         config.child_pid = child_pid
         set_winsize(fd, 50, 50)
 
-        client = mqtt.Client(client_id=f"{pk}.{dk}")
-        client.username_pw_set(username=f"{pk}.{dk}", password=dk)
+        client = mqtt.Client(client_id=f"{DEVICE_ID}")
+        client.username_pw_set(username=f"{DEVICE_ID}", password=DEVICE_KEY)
         client.on_connect = mqtt_on_connect
         client.on_message = mqtt_on_message
 
