@@ -2,7 +2,6 @@
 
 Bring any Linux device/server to the web, whenever they have public ip or not
 
-
 ## Config
 
 Modify app.js and main.py
@@ -21,7 +20,7 @@ python3 main.py
 
 ```sh
 npm install
-python -m http.server
+npm run test
 ```
 
 ## Web Terminal
