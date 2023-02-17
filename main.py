@@ -57,7 +57,7 @@ def read_and_forward_pty_output(mqttc):
                     errors="ignore"
                 )
                 mqttc.publish(
-                    f"/devices/{DEVICE_ID}/terminal/output", json.dumps({"output": output}))
+                    f"/device/{DEVICE_ID}/terminal/output", json.dumps({"output": output}))
 
 
 def pty_input(data):
@@ -74,8 +74,8 @@ def mqtt_on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe(f"/devices/{DEVICE_ID}/terminal/input")
-    client.subscribe(f"/devices/{DEVICE_ID}/terminal/resize")
+    client.subscribe(f"/device/{DEVICE_ID}/terminal/input")
+    client.subscribe(f"/device/{DEVICE_ID}/terminal/resize")
     t1 = threading.Thread(target=read_and_forward_pty_output,
                           args=(client,), daemon=True)
     t1.start()
@@ -87,9 +87,9 @@ def mqtt_on_message(client, userdata, msg):
     payload = msg.payload.decode('utf8')
     data = json.loads(payload)
     logging.debug(f"Topic: {msg.topic}, pyload: {payload}")
-    if topic == f"/devices/{DEVICE_ID}/terminal/input":
+    if topic == f"/device/{DEVICE_ID}/terminal/input":
         pty_input(data)
-    elif topic == f"/devices/{DEVICE_ID}/terminal/resize":
+    elif topic == f"/device/{DEVICE_ID}/terminal/resize":
         resize(data)
 
 
@@ -101,6 +101,7 @@ if __name__ == "__main__":
         # anything printed here will show up in the pty, including the output
         # of this subprocess
         while True:
+            print(1)
             subprocess.run(config.cmd)
     else:
         # this is the parent process fork.

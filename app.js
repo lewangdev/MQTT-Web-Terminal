@@ -24,7 +24,9 @@
     term.writeln('Press Enter key to activate the terminal')
     term.onData((data) => {
         console.log("browser terminal received new data:", data);
-        mqttc.publish("/device/" + deviceId + "/terminal/input", JSON.stringify({ input: data }));
+        var topicName = "/device/" + deviceId + "/terminal/input";
+        console.log(topicName)
+        mqttc.publish(topicName, JSON.stringify({ input: data }));
     });
 
     const mqttc = mqtt.connect(mqttUrl, { "username": deviceId, "password": devcieSecretKey });
