@@ -15,7 +15,7 @@ import threading
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 DEVICE_ID = "hWHbMmfnDa"
-DEVICE_KEY = "CFE4C09C"
+DEVICE_SECRET_KEY = "CFE4C09C"
 
 
 class AttrDict(dict):
@@ -110,7 +110,8 @@ if __name__ == "__main__":
         set_winsize(fd, 50, 50)
 
         client = mqtt.Client(client_id=f"{DEVICE_ID}")
-        client.username_pw_set(username=f"{DEVICE_ID}", password=DEVICE_KEY)
+        client.username_pw_set(
+            username=f"{DEVICE_ID}", password=DEVICE_SECRET_KEY)
         client.on_connect = mqtt_on_connect
         client.on_message = mqtt_on_message
 

@@ -8,30 +8,28 @@
       font-family: arial;
     }
   </style>
-  <link rel="stylesheet" href="https://www.uncon.net/MesloLGSNF-web-fonts/stylesheet.css">
-  <link rel="stylesheet" href="https://unpkg.com/xterm@4.11.0/css/xterm.css" />
+  <link rel="stylesheet" href="node_modules/xterm/css/xterm.css" />
 </head>
 
 <body>
-  <a href="https://github.com/xtermjs/xterm.js" target="_blank"
-    style="font-size: 1.4em; text-decoration: none; color:black">xterm.js</a>&nbsp;&nbsp;&nbsp;
-  <span style="font-size: small">status:
-    <span style="font-size: small" id="status">connecting...</span></span>
+  <a href="https://github.com/lewangdev/MQTT-Web-Terminal" target="_blank"
+    style="font-size: 1.4em; text-decoration: none; color:black">Web Terminal over MQTT</a>&nbsp;&nbsp;&nbsp;
+  <p style="font-size: small">MQTT Status:
+    <span style="font-size: small" id="status">connecting...</span>
+  </p>
 
-  <div
-    style="width: 100%; height: calc(100% - 50px);font-family: 'MesloLGS NF'; font-weight: normal; font-style: italic;"
-    id="terminal"></div>
+  <div id="terminal"></div>
 
   <p style="text-align: right; font-size: small">
     built by <a href="https://lewang.dev">Le Wang</a>
     <a href="https://github.com/lewangdev">GitHub</a>
   </p>
   <!-- xterm -->
-  <script src="https://unpkg.com/xterm@4.11.0/lib/xterm.js"></script>
-  <script src="https://unpkg.com/xterm-addon-fit@0.5.0/lib/xterm-addon-fit.js"></script>
-  <script src="https://unpkg.com/xterm-addon-web-links@0.4.0/lib/xterm-addon-web-links.js"></script>
-  <script src="https://unpkg.com/xterm-addon-search@0.8.0/lib/xterm-addon-search.js"></script>
-  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script src="node_modules/xterm/lib/xterm.js"></script>
+  <script src="node_modules/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+  <script src="node_modules/xterm-addon-search/lib/xterm-addon-search.js"></script>
+  <script src="node_modules/xterm-addon-web-links/lib/xterm-addon-web-links.js"></script>
+  <script src="node_modules/mqtt/dist/mqtt.min.js"></script>
   <script src="app.js"></script>
 
 </body>

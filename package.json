@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "mqtt": "^4.3.7",
+    "xterm": "^5.1.0",
+    "xterm-addon-fit": "^0.7.0",
+    "xterm-addon-search": "^0.11.0",
+    "xterm-addon-web-links": "^0.8.0"
+  },
+  "name": "mqtt-web-terminal",
+  "version": "1.0.0",
+  "main": "app.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cs01/pyxtermjs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cs01/pyxtermjs/issues"
+  },
+  "homepage": "https://github.com/cs01/pyxtermjs#readme",
+  "description": ""
+}

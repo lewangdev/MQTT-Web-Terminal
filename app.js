@@ -1,6 +1,7 @@
 (function (w) {
     const deviceId = "hWHbMmfnDa";
-    const devcieKey = "CFE4C09C"
+    const devcieSecretKey = "CFE4C09C"
+    const mqttUrl = "ws://192.168.52.164:9083/mqtt"
     const term = new Terminal({
         cursorBlink: true,
         macOptionIsMeta: true,
@@ -18,18 +19,15 @@
     term.resize(15, 50);
     console.log(`size: ${term.cols} columns, ${term.rows} rows`);
     fit.fit();
-    term.writeln("Welcome to xterm.js!");
-    term.writeln("https://github.com/xtermjs/xterm.js");
-    term.writeln('')
     term.writeln("You can copy with ctrl+shift+x");
     term.writeln("You can paste with ctrl+shift+v");
-    term.writeln('')
+    term.writeln('Press Enter key to activate the terminal')
     term.onData((data) => {
         console.log("browser terminal received new data:", data);
         mqttc.publish("/device/" + deviceId + "/terminal/input", JSON.stringify({ input: data }));
     });
 
-    const mqttc = mqtt.connect("ws://192.168.52.164:9083/mqtt", { "username": deviceId, "password": devcieKey });
+    const mqttc = mqtt.connect(mqttUrl, { "username": deviceId, "password": devcieSecretKey });
     mqttc.subscribe("/device/" + deviceId + "/terminal/output")
     const status = document.getElementById("status");
 
