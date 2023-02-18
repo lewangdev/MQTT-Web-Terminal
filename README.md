@@ -9,7 +9,7 @@ Modify app.js and main.py
 ## On Raspberry PI
 
 ```sh
-python -m venv .venv
+python3 -m venv .venv
 . .venv/bin/activatte
 pip install -r requirements.txt
 
@@ -26,3 +26,8 @@ npm run test
 ## Web Terminal
 
 open http://127.0.0.1:8000
+
+
+## Reference
+
+* [pytermjs](https://github.com/cs01/pyxtermjs)

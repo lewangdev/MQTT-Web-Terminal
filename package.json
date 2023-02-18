@@ -15,13 +15,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cs01/pyxtermjs.git"
+    "url": "git+https://github.com/lewangdev/MQTT-Web-Terminal.git"
   },
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "mqtt",
+    "web-terminal"
+  ],
+  "author": "Le Wang",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cs01/pyxtermjs/issues"
+    "url": "https://github.com/lewangdev/MQTT-Web-Terminal/issues"
   },
-  "homepage": "https://github.com/cs01/pyxtermjs#readme",
-  "description": ""
+  "homepage": "https://github.com/lewangdev/MQTT-Web-Terminal#readme"
 }
