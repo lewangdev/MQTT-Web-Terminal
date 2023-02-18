@@ -14,8 +14,15 @@ import threading
 
 FORMAT = '%(asctime)s %(message)s'
 logging.basicConfig(format=FORMAT, level=logging.DEBUG)
-DEVICE_ID = "hWHbMmfnDa"
-DEVICE_SECRET_KEY = "CFE4C09C"
+
+DEVICE_ID = "raspberrypi"
+# DEVICE_SHELL = "bash"
+DEVICE_SHELL = "sh"
+MQTT_HOST = "fe929eac.ala.cn-hangzhou.emqxsl.cn"
+MQTT_PORT = 8883
+MQTT_USER = "mqtt"
+MQTT_PASSWD = "<YOUT PASSWD>"
+MQTT_USE_TLS = True
 
 
 class AttrDict(dict):
@@ -24,7 +31,7 @@ class AttrDict(dict):
         self.__dict__ = self
 
 
-config = AttrDict(fd=None, cmd="sh", child_pid=None)
+config = AttrDict(fd=None, cmd=DEVICE_SHELL, child_pid=None)
 
 
 def set_winsize(fd, row, col, xpix=0, ypix=0):
@@ -109,13 +116,17 @@ if __name__ == "__main__":
         config.child_pid = child_pid
         set_winsize(fd, 50, 50)
 
-        client = mqtt.Client(client_id=f"{DEVICE_ID}")
+        client = mqtt.Client()
+
+        if MQTT_USE_TLS:
+            client.tls_set("emqxsl-ca.crt")
+            client.tls_insecure_set(True)
         client.username_pw_set(
-            username=f"{DEVICE_ID}", password=DEVICE_SECRET_KEY)
+            username=MQTT_USER, password=MQTT_PASSWD)
         client.on_connect = mqtt_on_connect
         client.on_message = mqtt_on_message
 
-        client.connect("192.168.52.164", 2883, 60)
+        client.connect(MQTT_HOST, MQTT_PORT, 60)
 
         # Blocking call that processes network traffic, dispatches callbacks and
         # handles reconnecting.

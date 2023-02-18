@@ -1,7 +1,9 @@
 (function (w) {
-    const deviceId = "hWHbMmfnDa";
-    const devcieSecretKey = "CFE4C09C"
-    const mqttUrl = "ws://192.168.52.164:9083/mqtt"
+    const mqtt_user = "mqtt"
+    const mqtt_passwd = "<YOUT PASSWD>"
+    const deviceId = "raspberrypi";
+    const mqttUrl = "wss://fe929eac.ala.cn-hangzhou.emqxsl.cn:8084/mqtt"
+
     const term = new Terminal({
         cursorBlink: true,
         macOptionIsMeta: true,
@@ -29,7 +31,7 @@
         mqttc.publish(topicName, JSON.stringify({ input: data }));
     });
 
-    const mqttc = mqtt.connect(mqttUrl, { "username": deviceId, "password": devcieSecretKey });
+    const mqttc = mqtt.connect(mqttUrl, { "username": mqtt_user, "password": mqtt_passwd });
     mqttc.subscribe("/device/" + deviceId + "/terminal/output")
     const status = document.getElementById("status");
 
