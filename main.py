@@ -18,7 +18,7 @@ logging.basicConfig(format=FORMAT, level=logging.DEBUG)
 DEVICE_ID = "raspberrypi"
 # DEVICE_SHELL = "bash"
 DEVICE_SHELL = "sh"
-MQTT_HOST = "fe929eac.ala.cn-hangzhou.emqxsl.cn"
+MQTT_HOST = "<Your MQTT Host>"
 MQTT_PORT = 8883
 MQTT_USER = "mqtt"
 MQTT_PASSWD = "<YOUT PASSWD>"

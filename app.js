@@ -1,8 +1,8 @@
 (function (w) {
     const mqtt_user = "mqtt"
-    const mqtt_passwd = "<YOUT PASSWD>"
+    const mqtt_passwd = "<YOUR PASSWD>"
     const deviceId = "raspberrypi";
-    const mqttUrl = "wss://fe929eac.ala.cn-hangzhou.emqxsl.cn:8084/mqtt"
+    const mqttUrl = "wss://<Your MQTT Host>:8084/mqtt"
 
     const term = new Terminal({
         cursorBlink: true,
